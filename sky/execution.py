@@ -124,6 +124,7 @@ def _execute(
     # Internal only:
     # pylint: disable=invalid-name
     _is_launched_by_spot_controller: bool = False,
+    security_group: Optional[str] = None,
 ) -> None:
     """Execute an entrypoint.
 
@@ -190,7 +191,7 @@ def _execute(
     if task.num_nodes > 1:
         requested_features.add(clouds.CloudImplementationFeatures.MULTI_NODE)
 
-    backend = backend if backend is not None else backends.CloudVmRayBackend()
+    backend = backend if backend is not None else backends.CloudVmRayBackend(security_group=security_group)
     if isinstance(backend, backends.CloudVmRayBackend):
         if down and idle_minutes_to_autostop is None:
             # Use auto{stop,down} to terminate the cluster after the task is
@@ -344,6 +345,7 @@ def launch(
     # Internal only:
     # pylint: disable=invalid-name
     _is_launched_by_spot_controller: bool = False,
+    security_group: Optional[str] = None
 ) -> None:
     # NOTE(dev): Keep the docstring consistent between the Python API and CLI.
     """Launch a task.
@@ -357,6 +359,7 @@ def launch(
     task; support for pipelines/general DAGs are in experimental branches.
 
     Args:
+        security_group: name of the security group for AWS cluster.
         task: sky.Task, or sky.Dag (experimental; 1-task only) to launch.
         cluster_name: name of the cluster to create/reuse.  If None,
             auto-generate a name.
@@ -439,6 +442,7 @@ def launch(
         idle_minutes_to_autostop=idle_minutes_to_autostop,
         no_setup=no_setup,
         _is_launched_by_spot_controller=_is_launched_by_spot_controller,
+        security_group=security_group,
     )
 
 

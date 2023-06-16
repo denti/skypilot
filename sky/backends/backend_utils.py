@@ -808,7 +808,8 @@ def write_cluster_config(
         region: Optional[clouds.Region] = None,
         zones: Optional[List[clouds.Zone]] = None,
         dryrun: bool = False,
-        keep_launch_fields_in_existing_config: bool = True) -> Dict[str, str]:
+        keep_launch_fields_in_existing_config: bool = True,
+        security_group: Optional[str] = None) -> Dict[str, str]:
     """Fills in cluster configuration templates and writes them out.
 
     Returns: {provisioner: path to yaml, the provisioning spec}.
@@ -921,7 +922,7 @@ def write_cluster_config(
                 # Generate the name of the security group we're looking for.
                 # (username, last 4 chars of hash of hostname): for uniquefying
                 # users on shared-account scenarios.
-                'security_group': skypilot_config.get_nested(
+                'security_group': security_group or skypilot_config.get_nested(
                     ('aws', 'security_group_name'),
                     f'sky-sg-{common_utils.user_and_hostname_hash()}'),
                 'vpc_name': skypilot_config.get_nested(('aws', 'vpc_name'),

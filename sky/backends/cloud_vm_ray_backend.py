@@ -1307,6 +1307,7 @@ class RetryingVmProvisioner(object):
         cluster_name: str,
         cloud_user_identity: Optional[List[str]],
         prev_cluster_status: Optional[global_user_state.ClusterStatus],
+        security_group: Optional[str] = None
     ):
         """The provision retry loop."""
         style = colorama.Style
@@ -1374,7 +1375,8 @@ class RetryingVmProvisioner(object):
                     region=region,
                     zones=zones,
                     dryrun=dryrun,
-                    keep_launch_fields_in_existing_config=cluster_exists)
+                    keep_launch_fields_in_existing_config=cluster_exists,
+                    security_group=security_group)
             except exceptions.ResourcesUnavailableError as e:
                 # Failed due to catalog issue, e.g. image not found.
                 logger.info(
@@ -1860,6 +1862,7 @@ class RetryingVmProvisioner(object):
         to_provision_config: ToProvisionConfig,
         dryrun: bool,
         stream_logs: bool,
+        security_group: Optional[str] = None,
     ):
         """Provision with retries for all launchable resources."""
         cluster_name = to_provision_config.cluster_name
@@ -1894,7 +1897,8 @@ class RetryingVmProvisioner(object):
                     stream_logs=stream_logs,
                     cluster_name=cluster_name,
                     cloud_user_identity=cloud_user,
-                    prev_cluster_status=prev_cluster_status)
+                    prev_cluster_status=prev_cluster_status,
+                    security_group=security_group)
                 if dryrun:
                     return
             except (exceptions.InvalidClusterNameError,
@@ -2216,7 +2220,7 @@ class CloudVmRayBackend(backends.Backend['CloudVmRayResourceHandle']):
     # Backward compatibility, with the old name of the handle.
     ResourceHandle = CloudVmRayResourceHandle  # pylint: disable=invalid-name
 
-    def __init__(self):
+    def __init__(self, security_group: Optional[str] = None):
         self.run_timestamp = backend_utils.get_run_timestamp()
         # NOTE: do not expanduser() here, as this '~/...' path is used for
         # remote as well to be expanded on the remote side.
@@ -2234,6 +2238,7 @@ class CloudVmRayBackend(backends.Backend['CloudVmRayResourceHandle']):
         # setup needs to be run outside the self._setup() and as part of
         # a job (--detach-setup).
         self._setup_cmd = None
+        self.security_group = security_group
 
     # --- Implementation of Backend APIs ---
 
@@ -2391,7 +2396,7 @@ class CloudVmRayBackend(backends.Backend['CloudVmRayResourceHandle']):
                         self.log_dir, self._dag, self._optimize_target,
                         self._requested_features, local_wheel_path, wheel_hash)
                     config_dict = provisioner.provision_with_retries(
-                        task, to_provision_config, dryrun, stream_logs)
+                        task, to_provision_config, dryrun, stream_logs, self.security_group)
                     break
                 except exceptions.ResourcesUnavailableError as e:
                     # Do not remove the stopped cluster from the global state
