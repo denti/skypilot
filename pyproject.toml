@@ -1,3 +1,11 @@
+[tool.poetry]
+name = "skypilot"
+version = "0.3.2"
+description = "skypilot fork by vli-team"
+authors = ["Artem Malakhov <teithant@gmail.com>"]
+
+
+
 [build-system]
 requires = ["setuptools>=58.0"]
 build-backend = "setuptools.build_meta"
