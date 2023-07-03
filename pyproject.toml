@@ -10,6 +10,39 @@ authors = ["Artem Malakhov <teithant@gmail.com>"]
 requires = ["setuptools>=58.0"]
 build-backend = "setuptools.build_meta"
 
+[tool.poetry.dependencies]
+python = "^3.7"
+wheel = "*"
+click = ">=7.0,<=8.0.4"
+colorama = "<0.4.5"
+cryptography = "*"
+jinja2 = ">=3.0"
+jsonschema = "*"
+networkx = "*"
+oauth2client = "*"
+pandas = "*"
+pendulum = "*"
+PrettyTable = ">=2.0.0"
+ray = {version = ">=2.2.0,<=2.4.0", extras = ["default"]}
+rich = "*"
+tabulate = "*"
+typing_extensions = {version = "*", python = "<3.8"}
+filelock = ">=3.6.0"
+grpcio = [
+  { version = ">=1.32.0,<=1.49.1,!=1.48.0", markers = "python_version < '3.10' and sys_platform == 'darwin'"},
+  { version = ">=1.42.0,<=1.49.1,!=1.48.0", markers = "python_version >= '3.10' and sys_platform == 'darwin'"},
+  { version = ">=1.32.0,<=1.51.3,!=1.48.0", markers = "python_version < '3.10' and sys_platform != 'darwin'"},
+  { version = ">=1.42.0,<=1.51.3,!=1.48.0", markers = "python_version >= '3.10' and sys_platform != 'darwin'"}
+]
+packaging = "*"
+protobuf = ">=3.15.3, !=3.19.5"
+psutil = "*"
+pulp = "*"
+awscli = "*"
+boto3 = "*"
+pycryptodome = "==3.12.0"
+
+
 [tool.yapf]
 based_on_style = "google"
 allow_split_before_dict_value = false
@@ -30,3 +63,15 @@ python_version = "3.8"
 follow_imports = "skip"
 ignore_missing_imports = true
 allow_redefinition = true
+
+
+[tool.poetry.extras]
+aws = ["awscli", "boto3", "pycryptodome==3.12.0"]
+azure = ["azure-cli>=2.31.0", "azure-core", "azure-identity>=1.13.0", "azure-mgmt-network"]
+gcp = ["google-api-python-client", "google-cloud-storage"]
+ibm = ["ibm-cloud-sdk-core", "ibm-vpc", "ibm-platform-services"]
+docker = ["docker"]
+lambda = []
+cloudflare = ["awscli", "boto3", "pycryptodome==3.12.0"]
+scp = []
+oci = ["oci"]
