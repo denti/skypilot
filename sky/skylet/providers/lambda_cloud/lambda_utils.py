@@ -90,8 +90,10 @@ class LambdaCloudClient:
 
     def __init__(self) -> None:
         if os.getenv('LAMBDA_CLOUD_API_KEY'):
+            print('Using Lambda Cloud API key from environment variable.')
             self._credentials = {'api_key': os.getenv('LAMBDA_CLOUD_API_KEY')}
         else:
+            print('Using Lambda Cloud API key from credentials file.')
             self.credentials = os.path.expanduser(CREDENTIALS_PATH)
             assert os.path.exists(self.credentials), 'Credentials not found'
             with open(self.credentials, 'r') as f:
