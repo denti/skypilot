@@ -89,13 +89,16 @@ class LambdaCloudClient:
     """Wrapper functions for Lambda Cloud API."""
 
     def __init__(self) -> None:
-        self.credentials = os.path.expanduser(CREDENTIALS_PATH)
-        assert os.path.exists(self.credentials), 'Credentials not found'
-        with open(self.credentials, 'r') as f:
-            lines = [line.strip() for line in f.readlines() if ' = ' in line]
-            self._credentials = {
-                line.split(' = ')[0]: line.split(' = ')[1] for line in lines
-            }
+        if os.getenv('LAMBDA_CLOUD_API_KEY'):
+            self._credentials = {'api_key': os.getenv('LAMBDA_CLOUD_API_KEY')}
+        else:
+            self.credentials = os.path.expanduser(CREDENTIALS_PATH)
+            assert os.path.exists(self.credentials), 'Credentials not found'
+            with open(self.credentials, 'r') as f:
+                lines = [line.strip() for line in f.readlines() if ' = ' in line]
+                self._credentials = {
+                    line.split(' = ')[0]: line.split(' = ')[1] for line in lines
+                }
         self.api_key = self._credentials['api_key']
         self.headers = {'Authorization': f'Bearer {self.api_key}'}
 
