@@ -95,7 +95,7 @@ class LambdaCloudClient:
         else:
             print('Using Lambda Cloud API key from credentials file.')
             self.credentials = os.path.expanduser(CREDENTIALS_PATH)
-            assert os.path.exists(self.credentials), 'Credentials not found'
+            assert os.path.exists(self.credentials), 'Lambda credentials not found'
             with open(self.credentials, 'r') as f:
                 lines = [line.strip() for line in f.readlines() if ' = ' in line]
                 self._credentials = {
